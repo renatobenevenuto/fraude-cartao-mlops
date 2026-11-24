@@ -1,1 +1,30 @@
+name: CI Pipeline Antifraude MLOps
 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-quality-gate:
+    name: Testes de Integridade e Quality Gate (AUPRC >= 0.70)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Executar testes e Quality Gate
+        run: pytest -v -s tests/test_pipeline.py
